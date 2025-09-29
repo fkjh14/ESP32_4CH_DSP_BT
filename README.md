@@ -72,6 +72,9 @@ A project that utilizes an ESP32 in combination with DSP functions to play music
 For the Switch, make the desired connection and either press the "EN" or "RST" (the abbreviation might vary) button on the PCB of the ESP32 or unplug and replug the ESP to power.
 
 ## GUI Instructions
+
+![](docs/tool_screenshot.png)
+
 1. Establish a WIFI signal by connecting the right pins (see above).
 2. Connect to the WIFI.
 3. Open the GUI.
