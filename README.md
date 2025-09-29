@@ -1,52 +1,71 @@
-ESP32 4CH Class-D / DSP amplifier with Bluetooth & AUX
-==========================================================
-This project is a 4-Channel Class-D DSP-amplifier based on a ESP32 / MA12070P chipset with Bluetooth- & AUX-input with graphical programming by a Windows tool and was designed as an alternative to all those chinese audio-boards usually designed around TPA3116 amps, ADAU1701 DSPs and Zhuhai Jieli bluetooth-IC's.<br>
-
-After multiple requests I have finally decided to publish the whole project under [GPL-3.0 license](LICENSE).<br>
-This repository contains all hardware-design, firmware-files, documentation as well as preliminary EMI compliance measurements.<br><br>
-
-
-<img src=docs/mainboard_top.png width=400><img src=docs/mainboard_bot.png height=250><br>
-<img src=docs/ext_board_top.png width=400><img src=docs/stackup_full.png width=400><br>
-<img src=docs/tool_screenshot.png width=500>
-
-<br><br>
-     
-YouTube
-=======
-I have uploaded two videos on my YouTube channel where I presented the project one time in general and another follow-up video doing a live-demonstration with a Bose Acoustimass 5 system. Please watch those videos to get a feeling for the project scope:<br>
-[Project Description & Overview](https://youtu.be/IkDLlTarcUw)<br>
-[Live Demo on Bose AM5 system](https://youtu.be/zn5gu4S4gQQ)
-<br><br>
-
+ESP32 Wroom DSP with BT
+A project that utilizes an ESP32 in combination with DSP functions to play music via Bluetooth or an
+analog input and to adjust DSP parameters via WLAN (Web UI).
 Features
-========
-* Bluetooth Wirless Audio & Analog Audio Input
-* DSP with following features
-  * Gain / Polarity / Mute / Sourceselect / Internal Mono-Summing
-  * Individual Highpass / Lowpass per channel
-  * 5 parametric equalizer per channel (Bell, HighShelf, LowShelf)
-  * Delay up to 30ms per channel
-  * Power output limiter
-  * Virtual Bass Enhancement
-  * Dynamic Bass Boost
-* IrDA remote control receiver
-  * Support to learn commands from any IR remote for basic control
-* Integrated WiFi Access Point and Windows based UI software
-  * Enables realtime DSP modification
-  * One software-tool to configure everything (DSP, system-control, IrDA, etc..) and supports saving/loading presets as file
-* Class-D amplifier with 2 channels (+2 additional channels with extension board)
-  * Intergrating state-of-the-art Class-D amplifier technology based on Infineon Merus
-  * 80 Watts / Channel @ 4 Ohm
-
-Some things you should know
-=======================================
-* In sum I designed three board-revisions (the schematics & gerber-files in this project as well as the board shown in the YouTube videos are the latest ones)
-* I also did some EMI compliance measurements based on an earlier rev2 board.
-  * The radiated emission-tests (30 MHz upwards) were fine and I had met the requirements of CISPR32:2015 / DIN EN 55032.
-  * There were some issues with the conducted emissions test (150 kHz - 30 MHz) with 24V/6A Meanwell reference-SMPS. It turned out that the CMC filter I used on rev2 was useless and redesigned it to a standard LC input filter on rev3. But I never did retest the rev3 for conducted emissions.
-  * [I uploaded some photos](EME%20Testing%20Feb%2025th%202021) from the EMI-chamber test-setup and sprectrum-analyzer-screenshots from this test here also
-* The firmware was only a proof-of-concept work for me. While it was overall in a more or less functional condition, it definitely needs some major refactoring, rework & cleanup. Not to mention that I did not document or made any comments on the code. As I was pretty new to FreeRTOS on ESP32 I also did not use the FreeRTOS probably always in the correct way as intended.
-* I did not touch the uploaded code for almost three years (it was just laying around on my Dropbox) and I also didn't test it now. I cannot tell you if this code will or will not compile or function at all with current ESP-IDF version or that I might have made some changes I wanted to fix but forgot about and didn't track. Same applies for the UI tool. So just try it out & find out :)
-* I have documented the protocol between the ESP and the UI-tool in the [commands.txt](commands.txt) file.
-* The Gui-Tool is C# based and was developed using [SharpDevelop](https://sourceforge.net/projects/sharpdevelop/) which is a very lightweight C# development environment. It might be possible to run the UI tool also on Mac or Linux using [mono](https://www.mono-project.com/).
+• Bluetooth Wireless Audio & Analog Audio Input
+• DSP with the following features:
+• Gain / Polarity / Mute / Source Select / Internal Mono-Summing
+• Individual Highpass / Lowpass per channel
+• 5 parametric equalizers per channel (Bell, HighShelf, LowShelf)
+• Delay up to 30ms per channel
+• Power output limiter
+• Virtual Bass Enhancement
+• Dynamic Bass Boost
+• Integrated WIFI Access Point and Windows-based UI software
+• Enables real-time DSP modification
+• One software tool to configure everything and supports saving/loading presets as a file
+How to Install
+1. Download the code in the Zip from
+https://github.com/fkjh14/ESP32_4CH_DSP_BT_AMPLIFIER/tree/main.
+2. Install and open Visual Studio Code.
+3. Install the ESP-IDF extension.
+4. Click on the extension (on the left side) → click on "advanced" at the bottom → "configure
+esp-idf extension" → a new window opens → click on "EXPRESS" → click on "Show all ESP-IDF
+tags" → under "Select ESP-IDF version", choose 4.2 → press "Install".
+5. Unzip the downloaded file and open "esp-idf firmware" as a folder in VSCode.
+6. Connect the ESP32 to the PC via USB.
+7. Select the correct COM port in the bottom bar (available devices are displayed above under
+the search bar).
+8. Click on "open esp idf terminal" in the bottom bar.
+9. In the terminal, type "idf.py flash" to flash the ESP32.
+10. If the terminal displays "Connecting", you may need to press the "Boot" button on the ESP32.
+11. After the Terminal displays “Done”, you are ready to use your DSP software or play Music
+through Bluetooth.
+Pin Outputs I2S Signal
+I2S Output Ch1&2:
+LCK (Left/Right Clock) → GPIO 25
+DIN (Data In) → GPIO 22
+BCK (Bit Clock) → GPIO 26
+I2S Output Ch 3&4:
+LCK (Left/Right Clock) → GPIO 4
+DIN (Data In) → GPIO 16
+BCK (Bit Clock) → GPIO 27
+Pin Layouts
+Pin Layout from ESP32 to Audio Dac Ch1&2 (like in our Project):
+Connection Audio DAC Connection ESP32
+Vin 3,3v
+Gnd Gnd
+LCK GPIO 25
+DIN GPIO 22
+BCK GPIO 26
+Pin Layout Audio Dac Ch3&4 (like in our Project):
+Connection Audio DAC Connection ESP32
+Vin 3,3v
+Gnd Gnd
+LCK GPIO 4
+DIN GPIO 16
+BCK GPIO 27
+Mode Switch:
+WLAN (GUI Mode) GPIO 34 → GND
+BT Mode GPIO 34 → 3,3v
+For the Switch, make the desired connection and eighter press the “EN” or “RST” (the abbreviation
+might varie) button on the PCB of the ESP32 or unplug and replug the ESP to power.
+GUI Instructions
+1. Establish a WIFI signal by connecting the right pins (see above).
+2. Connect to the WIFI.
+3. Open the GUI.
+4. Press "Reset All" once to set all settings to default.
+5. Adjust the settings as desired.
+6. With the "Control link" function, the same settings from the current channel are applied to
+the selected channels.
+7. To save the settings, press "Upload to Device".
