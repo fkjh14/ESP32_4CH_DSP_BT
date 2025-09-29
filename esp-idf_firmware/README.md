@@ -1,68 +1,106 @@
-This project is based initially on the A2DP-SINK demo from Espressif. Therefore see the original README below.
-======================
+# ESP-IDF A2DP-SINK Demo
 
+> **Note:** This project is based initially on the A2DP-SINK demo from Espressif.
 
 | Supported Targets | ESP32 |
 | ----------------- | ----- |
 
-ESP-IDF A2DP-SINK demo
-======================
+## Overview
 
-Demo of A2DP audio sink role
+This demo implements the **A2DP audio sink role** using the Advanced Audio Distribution Profile to receive audio streams from Bluetooth devices.
 
-This is the demo of API implementing Advanced Audio Distribution Profile to receive an audio stream.
+### Key Features
 
-This example involves the use of Bluetooth legacy profile A2DP for audio stream reception, AVRCP for media information notifications, and I2S for audio stream output interface.
+- **A2DP**: Bluetooth legacy profile for audio stream reception
+- **AVRCP**: Media information notifications
+- **I2S**: Audio stream output interface
 
-Applications such as bluetooth speakers can take advantage of this example as a reference of basic functionalities.
+This example serves as a reference for basic functionalities that applications such as Bluetooth speakers can utilize.
 
 ## How to use this example
 
 ### Hardware Required
 
-To play the sound, there is a need of loudspeaker and possibly an external I2S codec. Otherwise the example will only show a count of audio data packets received silently. Internal DAC can be selected and in this case external I2S codec may not be needed.
+#### Audio Output Options
 
-For the I2S codec, pick whatever chip or board works for you; this code was written using a PCM5102 chip, but other I2S boards and chips will probably work as well. The default I2S connections are shown below, but these can be changed in menuconfig:
+1. **External I2S Codec + Loudspeaker** (Recommended)
+   - Provides high-quality audio output
+   - Tested with PCM5102 chip (other I2S boards should work as well)
 
-| ESP pin   | I2S signal   |
-| :-------- | :----------- |
-| GPIO22    | LRCK         |
-| GPIO25    | DATA         |
-| GPIO26    | BCK          |
+2. **Internal DAC + Loudspeaker** (Alternative)
+   - Uses ESP32's built-in DAC
+   - Limited to 8-bit resolution
+   - No external codec required
 
-If the internal DAC is selected, analog audio will be available on GPIO25 and GPIO26. The output resolution on these pins will always be limited to 8 bit because of the internal structure of the DACs.
+> **Note:** Without a loudspeaker, the example will only display audio packet counts without audible output.
 
-### Configure the project
+#### I2S Pin Configuration
 
-```
+| ESP32 Pin | I2S Signal | Description |
+| :-------- | :--------- | :---------- |
+| GPIO22    | LRCK       | Left/Right Clock |
+| GPIO25    | DATA       | Audio Data |
+| GPIO26    | BCK        | Bit Clock |
+
+> 📝 **Configuration Note:** Pin assignments can be modified through `idf.py menuconfig`
+
+#### Internal DAC Output
+
+When using internal DAC:
+- **GPIO25**: Analog audio output (8-bit resolution)
+- **GPIO26**: Analog audio output (8-bit resolution)
+
+### Project Configuration
+
+Run the configuration menu:
+
+```bash
 idf.py menuconfig
 ```
 
-* Set the use of external I2S codec or internal DAC for audio output, and configure the output PINs under A2DP Example Configuration
+#### Required Configuration Steps
 
-* Enable Classic Bluetooth and A2DP under Component config --> Bluetooth --> Bluedroid Enable
+1. **Audio Output Selection**
+   - Navigate to: `A2DP Example Configuration`
+   - Choose between external I2S codec or internal DAC
+   - Configure output pins as needed
+
+2. **Bluetooth Configuration**
+   - Navigate to: `Component config` → `Bluetooth` → `Bluedroid Enable`
+   - Enable Classic Bluetooth and A2DP support
 
 ### Build and Flash
 
-Build the project and flash it to the board, then run monitor tool to view serial output.
+Build, flash, and monitor the project:
 
-```
+```bash
 idf.py -p PORT flash monitor
 ```
 
-(To exit the serial monitor, type ``Ctrl-]``.)
+> 💡 **Tip:** Replace `PORT` with your actual serial port (e.g., `COM3` on Windows, `/dev/ttyUSB0` on Linux)
+
+**Exit monitor:** Press `Ctrl+]`
 
 ## Example Output
 
-After the program is started, the example starts inquiry scan and page scan, awaiting being discovered and connected. Other bluetooth devices such as smart phones can discover a device named "ESP_SPEAKER". A smartphone or another ESP-IDF example of A2DP source can be used to connect to the local device.
+### Device Discovery
 
-Once A2DP connection is set up, there will be a notification message with the remote device's bluetooth MAC address like the following:
+After startup, the example enters discoverable mode:
+- 📱 **Device Name**: `ESP_SPEAKER`
+- 🔍 **Status**: Awaiting connection from Bluetooth devices
+- 📱 Compatible devices: Smartphones, tablets, or other A2DP source devices
+
+### Connection Establishment
+
+Upon successful A2DP connection, you'll see:
 
 ```
 I (106427) BT_AV: A2DP connection state: Connected, [64:a2:f9:69:57:a4]
 ```
 
-If a smartphone is used to connect to local device, starting to play music with an APP will result in the transmission of audio stream. The transmitting of audio stream will be visible in the application log including a count of audio data packets, like this:
+### Audio Streaming
+
+When audio playback starts from the connected device:
 
 ```
 I (120627) BT_AV: A2DP audio state: Started
@@ -70,11 +108,35 @@ I (122697) BT_AV: Audio packet count 100
 I (124697) BT_AV: Audio packet count 200
 I (126697) BT_AV: Audio packet count 300
 I (128697) BT_AV: Audio packet count 400
-
 ```
 
-Also, the sound will be heard if a loudspeaker is connected and possible external I2S codec is correctly configured. For ESP32 A2DP source example, the sound is noise as the audio source generates the samples with a random sequence.
+### Audio Output
+
+- 🔊 **With Loudspeaker**: Audio will be heard through connected speakers
+- 📊 **Without Loudspeaker**: Only packet counts are displayed in the console
+
+> **Note**: When using ESP32 A2DP source as input, the audio output will be noise since the source generates random sample sequences.
 
 ## Troubleshooting
-* For current stage, the supported audio codec in ESP32 A2DP is SBC. SBC data stream is transmitted to A2DP sink and then decoded into PCM samples as output. The PCM data format is normally of 44.1kHz sampling rate, two-channel 16-bit sample stream. Other decoder configurations in ESP32 A2DP sink is supported but need additional modifications of protocol stack settings.
-* As a usage limitation, ESP32 A2DP sink can support at most one connection with remote A2DP source devices. Also, A2DP sink cannot be used together with A2DP source at the same time, but can be used with other profiles such as SPP and HFP.
+
+### Audio Codec Support
+
+- **Supported Codec**: SBC (Sub-Band Coding)
+- **Audio Format**:
+  - Sample Rate: 44.1kHz
+  - Channels: Stereo (2-channel)
+  - Bit Depth: 16-bit PCM
+- **Custom Configurations**: Other decoder settings require protocol stack modifications
+
+### Connection Limitations
+
+- **Maximum Connections**: One A2DP source device at a time
+- **Profile Compatibility**:
+  - ❌ Cannot run A2DP sink and A2DP source simultaneously
+  - ✅ Compatible with other profiles (SPP, HFP)
+
+### Common Issues
+
+- **No Audio Output**: Verify loudspeaker connections and I2S configuration
+- **Connection Issues**: Ensure Bluetooth is properly enabled in menuconfig
+- **Audio Quality**: Check if external I2S codec is properly connected

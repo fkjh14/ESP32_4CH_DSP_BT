@@ -1,0 +1,17 @@
+{
+  "idf.flashType": "UART",
+  "idf.portWin": "COM11",
+  "idf.openOcdConfigs": [
+    "interface/ftdi/esp32_devkitj_v1.cfg",
+    "target/esp32.cfg"
+  ],
+  "idf.customExtraVars": {
+    "OPENOCD_SCRIPTS": "c:\\Users\\Johan\\esp-idf\\tools\\tools\\openocd-esp32\\v0.12.0-esp32-20240821/openocd-esp32/share/openocd/scripts",
+    "IDF_CCACHE_ENABLE": "1",
+    "ESP_ROM_ELF_DIR": "c:\\Users\\Johan\\esp-idf\\tools\\tools\\esp-rom-elfs\\20240305/",
+    "IDF_TARGET": "esp32"
+  },
+  "idf.espIdfPathWin": "C:\\Users\\Johan\\esp\\v4.2\\esp-idf",
+  "idf.toolsPathWin": "c:\\Users\\Johan\\esp-idf\\tools",
+  "idf.pythonInstallPath": "c:\\Users\\Johan\\esp-idf\\tools\\tools\\idf-python\\3.8.7\\python.exe"
+}
