@@ -55,7 +55,7 @@ enum {
 /* handler for bluetooth stack enabled events */
 static void bt_av_hdl_stack_evt(uint16_t event, void *p_param);
 
-#define EXAMPLE_ESP_WIFI_SSID      "SAmp_forte"
+#define EXAMPLE_ESP_WIFI_SSID      "ConfigESP"
 #define EXAMPLE_ESP_WIFI_PASS      "makethesoundyours"
 #define EXAMPLE_ESP_WIFI_CHANNEL   CONFIG_ESP_WIFI_CHANNEL
 #define EXAMPLE_MAX_STA_CONN       CONFIG_ESP_MAX_STA_CONN
