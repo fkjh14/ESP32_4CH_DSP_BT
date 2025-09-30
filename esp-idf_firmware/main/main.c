@@ -406,7 +406,7 @@ static void bt_av_hdl_stack_evt(uint16_t event, void *p_param)
     switch (event) {
     case BT_APP_EVT_STACK_UP: {
         /* set up device name */
-        esp_bt_dev_set_device_name("Johannes-DSP-Box");
+        esp_bt_dev_set_device_name("ESP32");
 
         esp_bt_gap_register_callback(bt_app_gap_cb);
 
