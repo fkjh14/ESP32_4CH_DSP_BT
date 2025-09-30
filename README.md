@@ -76,7 +76,7 @@ For the Switch, make the desired connection and either press the "EN" or "RST" (
 ![](docs/tool_screenshot.png)
 
 1. Establish a WIFI signal by connecting the right pins (see above).
-2. Connect to the WIFI.
+2. Connect to the WIFI with the Password: "makethesoundyours".
 3. Open the GUI.
 4. Press "Reset All" once to set all settings to default.
 5. Adjust the settings as desired.
