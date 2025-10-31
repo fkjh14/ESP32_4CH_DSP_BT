@@ -15,7 +15,8 @@ typedef struct  {
 	int dynbass[5];
 	uint8_t channel_bypass[4][7];
 	uint8_t global_bypass[5];
-	
+	char bt_device_name[32];
+
 } dspsettings;
 
 
@@ -79,3 +80,6 @@ void SetChannelBypass(int channel, int lp, int hp, int eq0, int eq1, int eq2, in
 void GetChannelBypass(int channel, int * lp, int * hp, int * eq0, int * eq1, int * eq2, int * eq3, int * eq4);
 void SetGlobalBypass(int vbs, int dynbass, int res0, int res1, int res2);
 void GetGlobalBypass(int * vbs, int * dynbass, int * res0, int * res1, int * res2);
+
+void SetBTName(const char* name);
+void GetBTName(char* name, size_t max_len);

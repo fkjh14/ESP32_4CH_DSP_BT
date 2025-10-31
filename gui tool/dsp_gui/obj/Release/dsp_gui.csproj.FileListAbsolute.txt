@@ -6,3 +6,15 @@ C:\Users\Markus\Documents\SharpDevelop Projects\dsp_gui\dsp_gui\obj\Release\dsp_
 C:\Users\Markus\Documents\SharpDevelop Projects\dsp_gui\dsp_gui\obj\Release\dsp_gui.MainForm.resources
 C:\Users\Markus\Documents\SharpDevelop Projects\dsp_gui\dsp_gui\obj\Release\dsp_gui.csproj.GenerateResource.Cache
 C:\Users\Markus\Documents\SharpDevelop Projects\dsp_gui\dsp_gui\obj\Release\dsp_gui.exe
+C:\ESP_DSP_Project\esp-idf_firmware\gui tool\dsp_gui\bin\Release\dsp_gui.exe.config
+C:\ESP_DSP_Project\esp-idf_firmware\gui tool\dsp_gui\bin\Release\dsp_gui.exe
+C:\ESP_DSP_Project\esp-idf_firmware\gui tool\dsp_gui\bin\Release\MACTrackBarLib.dll
+C:\ESP_DSP_Project\esp-idf_firmware\gui tool\dsp_gui\bin\Release\PeakMeterCtrl.dll
+C:\ESP_DSP_Project\esp-idf_firmware\gui tool\dsp_gui\obj\Release\dsp_gui.csproj.AssemblyReference.cache
+C:\ESP_DSP_Project\esp-idf_firmware\gui tool\dsp_gui\obj\Release\dsp_gui.LimitCalc.resources
+C:\ESP_DSP_Project\esp-idf_firmware\gui tool\dsp_gui\obj\Release\dsp_gui.MainForm.resources
+C:\ESP_DSP_Project\esp-idf_firmware\gui tool\dsp_gui\obj\Release\dsp_gui.csproj.GenerateResource.cache
+C:\ESP_DSP_Project\esp-idf_firmware\gui tool\dsp_gui\obj\Release\dsp_gui.csproj.CoreCompileInputs.cache
+C:\ESP_DSP_Project\esp-idf_firmware\gui tool\dsp_gui\obj\Release\dsp_gui.csproj.Up2Date
+C:\ESP_DSP_Project\esp-idf_firmware\gui tool\dsp_gui\obj\Release\dsp_gui.exe
+C:\ESP_DSP_Project\esp-idf_firmware\gui tool\dsp_gui\obj\Release\dsp_gui.exe.config

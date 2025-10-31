@@ -414,8 +414,6 @@ void SetDynBass(int watchtime, int threshold, int frequency, int gain, int gains
 	float bufferspersec = fs/128.0f;
 	dynbass_gainspeed = (((float)gainspeed)/bufferspersec)/10.0f;
 	ESP_LOGI ("dynbass", "wt: %d, th: %f, freq: %d, gain: %f, gainspeed: %f", dynbass_watchtime, dynbass_threshold, frequency, dynbass_desired_gain, dynbass_gainspeed);
-	
-
 
 }
 
@@ -433,12 +431,12 @@ void SetBassEnhance(int bassfreq, int gain) {
 
 	if (bassfreq <30 || bassfreq>200) return;
 	if (gain <0 || gain>500) return;
-	
-	
-	
+
+
+
 	settings.bassenhance[1] = gain;
 	settings.bassenhance[0] = bassfreq;
-	
+
 	bass_enhance_gain = ((float)gain)/100.0f;
 	
 	//lp for basssignal	
@@ -994,11 +992,15 @@ void initDSPParameters() {
 	settings.dynbass[4] = 10;
 	
 	delay_r_ptr = 0;
-	
+
 	for (int i=0; i<8; i++) {
 		settings.irparams[i] = 0;
 	}
-	
+
+	// Initialize Bluetooth device name with default
+	strncpy(settings.bt_device_name, "Johannes-DSP-Box", sizeof(settings.bt_device_name) - 1);
+	settings.bt_device_name[sizeof(settings.bt_device_name) - 1] = '\0';
+
 }
 void PrintParameters() {
 	ESP_LOGE("PAR","Source: %d %d %d %d", settings.sourceselect[0] ,settings.sourceselect[1] ,settings.sourceselect[2] ,settings.sourceselect[3] );
@@ -1234,9 +1236,10 @@ int SaveParametersToFlash() {
 		ESP_LOGE("NVS", "Error opening Flash");
 		return 0;
 	}
-	
-	size_t size = sizeof(settings);		
+
+	size_t size = sizeof(settings);
 	ESP_LOGI("NVS","DSP Settings has size: %d", size);
+	ESP_LOGI("NVS","Saving: VBS_bypass=%d DynBass_bypass=%d", settings.global_bypass[0], settings.global_bypass[1]);
 	err = nvs_set_blob(nvs_handle,"dspsettings",&settings, size);
 	if (err != ESP_OK) {
 		ESP_LOGE("NVS", "Error doing nvs_set_blob");
@@ -1275,6 +1278,7 @@ void RestoreParametersFromFlash() {
 		ESP_LOGI("NVS","Updated Filters in storage");
 	}
 	ESP_LOGI("NVS", "ReadSize: %d, originalsize: %d", readsize, size);
+	ESP_LOGI("NVS","Loaded: VBS_bypass=%d DynBass_bypass=%d", settings.global_bypass[0], settings.global_bypass[1]);
 	nvs_close(nvs_handle);
 
 }
@@ -1301,5 +1305,20 @@ void GetIRParams(int* addr_onoff, int* cmd_onoff, int* addr_volup, int* cmd_volu
 	*addr_mute = settings.irparams[6];
 	*cmd_mute = settings.irparams[7];
 
+}
+
+void SetBTName(const char* name) {
+	if (name != NULL) {
+		strncpy(settings.bt_device_name, name, sizeof(settings.bt_device_name) - 1);
+		settings.bt_device_name[sizeof(settings.bt_device_name) - 1] = '\0';
+		ESP_LOGI("DSP", "Bluetooth name set to: %s", settings.bt_device_name);
+	}
+}
+
+void GetBTName(char* name, size_t max_len) {
+	if (name != NULL && max_len > 0) {
+		strncpy(name, settings.bt_device_name, max_len - 1);
+		name[max_len - 1] = '\0';
+	}
 }
 

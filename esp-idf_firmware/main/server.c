@@ -42,6 +42,12 @@ char* ptr;
 
 int params[10];
 uint8_t count=0;
+
+// Make a copy of rx_buffer before strtok() destroys it (needed for BT name parsing)
+char rx_buffer_copy[256];
+strncpy(rx_buffer_copy, rx_buffer, sizeof(rx_buffer_copy) - 1);
+rx_buffer_copy[sizeof(rx_buffer_copy) - 1] = '\0';
+
 ptr=strtok(rx_buffer,del);
 
 uint8_t foundStart = 0;
@@ -256,50 +262,50 @@ while (ptr != NULL) {
 	
 	//bassenhance
 	if ( (params[0]==11 && count==3) || (params[0]==36 && count==1)) {
-	
+
 		if(params[0]==11) {
 			ESP_LOGI("DSP", "Set BassEnhance %d %d",params[1],params[2]);
 			SetBassEnhance(params[1],params[2]);
-			sprintf(rx_buffer,"!,11,1,?");		
+			sprintf(rx_buffer,"!,11,1,?");
 		}
 		else {
 			GetBassEnhance(&tempdata[0], &tempdata[1]);
 			ESP_LOGI("DSP","BassEnhance Request: %d, %d",tempdata[0], tempdata[1]);
-			sprintf(rx_buffer,"!,36,%d,%d,?",tempdata[0], tempdata[1]);		
+			sprintf(rx_buffer,"!,36,%d,%d,?",tempdata[0], tempdata[1]);
 		}
-	
+
 	}
 	
 	//dynbass
 	if ( (params[0]==14 && count==6) || (params[0]==39 && count==1)) {
-	
+
 		if(params[0]==14) {
 			ESP_LOGI("DSP", "Set DynBass");
-			SetDynBass(params[1],params[2],params[3],params[4],params[5]);	
-			sprintf(rx_buffer,"!,14,1,?");			
+			SetDynBass(params[1],params[2],params[3],params[4],params[5]);
+			sprintf(rx_buffer,"!,14,1,?");
 		}
 		else {
 			GetDynBass(&tempdata[0], &tempdata[1], &tempdata[2], &tempdata[3],&tempdata[4]);
 			ESP_LOGI("DSP","DynBass Request: %d, %d, %d, %d, %d",tempdata[0], tempdata[1], tempdata[2], tempdata[3], tempdata[4]);
-			sprintf(rx_buffer,"!,39,%d,%d,%d,%d,%d,?",tempdata[0], tempdata[1], tempdata[2], tempdata[3], tempdata[4]);	
+			sprintf(rx_buffer,"!,39,%d,%d,%d,%d,%d,?",tempdata[0], tempdata[1], tempdata[2], tempdata[3], tempdata[4]);
 		}
-	
+
 	}
 	
 	//bypass global
 	if ( (params[0]==41 && count==3) || (params[0]==66 && count==1)) {
-	
+
 		if(params[0]==41) {
-			ESP_LOGI("DSP", "Set ByPass Global %d %d",params[1], params[2]);
+			ESP_LOGI("DSP", "Set ByPass Global VBS=%d DynBass=%d",params[1], params[2]);
 			SetGlobalBypass(params[1], params[2], 1,1,1);
-			sprintf(rx_buffer,"!,41,1,?");			
+			sprintf(rx_buffer,"!,41,1,?");
 		}
 		else {
 			GetGlobalBypass(&tempdata[0], &tempdata[1], &tempdata[2], &tempdata[3],&tempdata[4]);
-			ESP_LOGI("DSP","Global Bypass Request: %d, %d",tempdata[0], tempdata[1]);
-			sprintf(rx_buffer,"!,66,%d,%d,?",tempdata[0], tempdata[1]);	
+			ESP_LOGI("DSP","GET Global Bypass: VBS=%d DynBass=%d",tempdata[0], tempdata[1]);
+			sprintf(rx_buffer,"!,66,%d,%d,?",tempdata[0], tempdata[1]);
 		}
-	
+
 	}
 	
 	//bypass channel
@@ -328,17 +334,60 @@ while (ptr != NULL) {
 	
 	//IR Remote
 	if ( (params[0]==12 && count==9) || (params[0]==37 && count==1)) {
-	
+
 		if (params[0]==12) {
 			ESP_LOGI("DSP", "Set IR Request %d %d %d %d %d %d %d %d",params[1], params[2],params[3],params[4],params[5],params[6],params[7],params[8]);
-			SetIRParams(params[1], params[2],params[3],params[4],params[5],params[6],params[7],params[8]);					
+			SetIRParams(params[1], params[2],params[3],params[4],params[5],params[6],params[7],params[8]);
 			sprintf(rx_buffer,"!,12,1,?");
 		}
 		else {
-			GetIRParams(&tempdata[0],&tempdata[1],&tempdata[2],&tempdata[3],&tempdata[4],&tempdata[5], &tempdata[6], &tempdata[7]);		
+			GetIRParams(&tempdata[0],&tempdata[1],&tempdata[2],&tempdata[3],&tempdata[4],&tempdata[5], &tempdata[6], &tempdata[7]);
 			ESP_LOGI("DSP","IR Params: %d, %d, %d, %d, %d, %d, %d, %d",tempdata[0], tempdata[1], tempdata[2], tempdata[3], tempdata[4], tempdata[5], tempdata[6], tempdata[7]);
 			sprintf(rx_buffer,"!,37,%d,%d,%d,%d,%d,%d,%d,%d,?",tempdata[0], tempdata[1], tempdata[2], tempdata[3], tempdata[4], tempdata[5], tempdata[6], tempdata[7]);
 		}
+	}
+
+	//Bluetooth Name - Set (Command 42)
+	if (params[0]==42) {
+		// Extract name from rx_buffer_copy: "?,42,Name"
+		// Find position after "?,42,"
+		char* name_start = strstr(rx_buffer_copy, ",42,");
+		if (name_start != NULL) {
+			name_start += 4; // Skip ",42,"
+
+			// Find end of name (end of string or newline)
+			int name_len = strlen(name_start);
+
+			// Remove any trailing whitespace, newline, or carriage return
+			while (name_len > 0 && (name_start[name_len-1] == '\r' ||
+			                        name_start[name_len-1] == '\n' ||
+			                        name_start[name_len-1] == ' ')) {
+				name_len--;
+			}
+
+			if (name_len > 0 && name_len < 32) {
+				char bt_name[32];
+				strncpy(bt_name, name_start, name_len);
+				bt_name[name_len] = '\0';
+				SetBTName(bt_name);
+				ESP_LOGI("DSP", "Set Bluetooth Name: %s", bt_name);
+				sprintf(rx_buffer,"!,42,1,?");
+			} else {
+				ESP_LOGE("DSP", "Invalid Bluetooth name length: %d", name_len);
+				sprintf(rx_buffer,"!,42,0,?");
+			}
+		} else {
+			ESP_LOGE("DSP", "Could not parse Bluetooth name from: %s", rx_buffer_copy);
+			sprintf(rx_buffer,"!,42,0,?");
+		}
+	}
+
+	//Bluetooth Name - Get (Command 67)
+	if (params[0]==67 && count==1) {
+		char bt_name[32];
+		GetBTName(bt_name, sizeof(bt_name));
+		ESP_LOGI("DSP","Get Bluetooth Name: %s", bt_name);
+		sprintf(rx_buffer,"!,67,%s,?", bt_name);
 	}
 	
 	

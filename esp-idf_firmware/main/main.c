@@ -55,7 +55,7 @@ enum {
 /* handler for bluetooth stack enabled events */
 static void bt_av_hdl_stack_evt(uint16_t event, void *p_param);
 
-#define EXAMPLE_ESP_WIFI_SSID      "ConfigESP"
+#define EXAMPLE_ESP_WIFI_SSID      "SAmp_forte"
 #define EXAMPLE_ESP_WIFI_PASS      "makethesoundyours"
 #define EXAMPLE_ESP_WIFI_CHANNEL   CONFIG_ESP_WIFI_CHANNEL
 #define EXAMPLE_MAX_STA_CONN       CONFIG_ESP_MAX_STA_CONN
@@ -119,12 +119,11 @@ void app_main(void)
 	uint8_t btwifimode = 0;
 	uint8_t initaudiodevices=0;
     initSysmgmt(&btwifimode, &initaudiodevices);
-    
+
     initAudioAuxMode();
-    
-    InitExtAudioDevices();      	
-    
-    
+
+    InitExtAudioDevices();
+
     if (btwifimode==0) initBT();
     else initWIFI();
     PowerUpMA120x0();
@@ -266,6 +265,7 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
         wifi_event_ap_staconnected_t* event = (wifi_event_ap_staconnected_t*) event_data;
         ESP_LOGI(TAG, "station "MACSTR" join, AID=%d",
                  MAC2STR(event->mac), event->aid);
+        ESP_LOGI(TAG, "AP IP address: 192.168.4.1, TCP Server Port: 77");
     } else if (event_id == WIFI_EVENT_AP_STADISCONNECTED) {
         wifi_event_ap_stadisconnected_t* event = (wifi_event_ap_stadisconnected_t*) event_data;
         ESP_LOGI(TAG, "station "MACSTR" leave, AID=%d",
@@ -358,14 +358,61 @@ void bt_app_gap_cb(esp_bt_gap_cb_event_t event, esp_bt_gap_cb_param_t *param)
     }
     return;
 }
+// static void bt_av_hdl_stack_evt(uint16_t event, void *p_param)
+// {
+//     ESP_LOGD(BT_AV_TAG, "%s evt %d", __func__, event);
+//     switch (event) {
+//     case BT_APP_EVT_STACK_UP: {
+//         /* set up device name */
+//         char *dev_name = "SAmp_forte";
+//         esp_bt_dev_set_device_name(dev_name);
+
+//         esp_bt_gap_register_callback(bt_app_gap_cb);
+
+//         /* initialize AVRCP controller */
+//         esp_avrc_ct_init();
+//         esp_avrc_ct_register_callback(bt_app_rc_ct_cb);
+//         /* initialize AVRCP target */
+//         assert (esp_avrc_tg_init() == ESP_OK);
+//         esp_avrc_tg_register_callback(bt_app_rc_tg_cb);
+
+//         esp_avrc_rn_evt_cap_mask_t evt_set = {0};
+//         esp_avrc_rn_evt_bit_mask_operation(ESP_AVRC_BIT_MASK_OP_SET, &evt_set, ESP_AVRC_RN_VOLUME_CHANGE);
+//         assert(esp_avrc_tg_set_rn_evt_cap(&evt_set) == ESP_OK);
+
+//         /* initialize A2DP sink */
+//         esp_a2d_register_callback(&bt_app_a2d_cb);
+//         esp_a2d_sink_register_data_callback(bt_app_a2d_data_cb);
+//         esp_a2d_sink_init();
+
+//         /* Set Device Name and Scan Mode */
+//         esp_bt_dev_set_device_name("Johannes-DSP-Box");
+//         esp_bt_gap_set_scan_mode(ESP_BT_SCAN_MODE_CONNECTABLE_DISCOVERABLE);
+
+//         /* set discoverable and connectable mode, wait to be connected */
+//         esp_bt_gap_set_scan_mode(ESP_BT_CONNECTABLE, ESP_BT_NON_DISCOVERABLE);
+//         SetBluetoothReady();
+//         break;
+//     }
+//     default:
+//         ESP_LOGE(BT_AV_TAG, "%s unhandled evt %d", __func__, event);
+//         break;
+//     }
+// }
 
 static void bt_av_hdl_stack_evt(uint16_t event, void *p_param)
 {
     ESP_LOGD(BT_AV_TAG, "%s evt %d", __func__, event);
     switch (event) {
     case BT_APP_EVT_STACK_UP: {
-        /* set up device name */
-        esp_bt_dev_set_device_name("ESP32");
+        /* set up device name from stored settings */
+        char bt_name[32];
+        GetBTName(bt_name, sizeof(bt_name));
+        if (bt_name[0] == '\0') {
+            strcpy(bt_name, "Johannes-DSP-Box");
+        }
+        esp_bt_dev_set_device_name(bt_name);
+        ESP_LOGI(BT_AV_TAG, "Bluetooth device name set to: %s", bt_name);
 
         esp_bt_gap_register_callback(bt_app_gap_cb);
 

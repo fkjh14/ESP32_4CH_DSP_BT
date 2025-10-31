@@ -173,7 +173,8 @@ static void ButtonLEDPowerTask (void * arg) {
 	
 	
 	while (1) {
-		currentbitmask = (gpio_get_level(35)<<5) | (gpio_get_level(33)<<4) | (gpio_get_level(23)<<3) | (gpio_get_level(13)<<2) | (gpio_get_level(32)<<1) | gpio_get_level(17);
+		// GPIO 32 reserved for future digital encoder
+		currentbitmask = (gpio_get_level(35)<<5) | (gpio_get_level(33)<<4) | (gpio_get_level(23)<<3) | (gpio_get_level(13)<<2) | (0<<1) | gpio_get_level(17);
 		
 		
 		if (lastbitmask == emptybitmask && currentbitmask == 0b00011111) {
@@ -198,10 +199,11 @@ static void ButtonLEDPowerTask (void * arg) {
 			ESP_LOGI ("SW","VOL UP Button pressed");
 			VolumeUp();
 		}
-		else if (lastbitmask == emptybitmask && currentbitmask == 0b00111011 && GetSurviveMode()!=2) {
+		// Volume Down Button disabled - GPIO 32 reserved for future digital encoder
+		/*else if (lastbitmask == emptybitmask && currentbitmask == 0b00111011 && GetSurviveMode()!=2) {
 			ESP_LOGI ("SW","VOL down Button pressed");
 			VolumeDown();
-		}
+		}*/
 		else if (lastbitmask == emptybitmask && currentbitmask == 0b00111101 && GetSurviveMode()!=2) {
 			ESP_LOGI ("SW","mute Button pressed");
 			MuteUnMute();
@@ -242,11 +244,11 @@ static void ButtonLEDPowerTask (void * arg) {
 
 void initSysmgmt(uint8_t * mode, uint8_t * initaudiodevice) {
 
-	//button inputs
-	gpio_config_t io_conf3;    
-    io_conf3.intr_type = GPIO_INTR_DISABLE;    
+	//button inputs (GPIO 32 reserved for future digital encoder)
+	gpio_config_t io_conf3;
+    io_conf3.intr_type = GPIO_INTR_DISABLE;
     io_conf3.mode = GPIO_MODE_INPUT;
-    io_conf3.pin_bit_mask = ((1ULL<<35) | (1ULL<<17)| (1ULL<<13)| (1ULL<<32)| (1ULL<<33) | (1ULL<<23));   
+    io_conf3.pin_bit_mask = ((1ULL<<35) | (1ULL<<17)| (1ULL<<13)| (1ULL<<33) | (1ULL<<23));
     io_conf3.pull_down_en = 0;
     io_conf3.pull_up_en = 0;
     gpio_config(&io_conf3);  

@@ -58,7 +58,9 @@ namespace dsp_gui
 		bool irrequest = false;
 		bool resetallrequest = false;
 		bool savetoflashrequest = false;
-		
+		bool btnamerequest = false;
+		string btname = "";
+
 		double[] levels = new double[9];
 		int[] ircode = new int[2];
 		bool wasir = false;
@@ -239,7 +241,20 @@ namespace dsp_gui
 					savetoflashrequest = false;
 					WriteData(txstring);
 				}
-				
+
+				else if (btnamerequest) {
+					if (btname != "") {
+						// Set BT Name
+						txstring = "?,42," + btname;
+						btname = "";
+					} else {
+						// Get BT Name
+						txstring = "?,67";
+					}
+					btnamerequest = false;
+					WriteData(txstring);
+				}
+
 				else if (resetallrequest) {
 					txstring = "?,9";
 					resetallrequest = false;
@@ -411,7 +426,12 @@ namespace dsp_gui
 		public void ResetAllRequest() {
 			resetallrequest = true;
 		}
-		
+
+		public void SetBTNameRequest(string name) {
+			btname = name;
+			btnamerequest = true;
+		}
+
 		void WriteData(string strin) {
 			
 			try {
@@ -470,19 +490,30 @@ namespace dsp_gui
 			string[] split = input.Split(',');
 			if (!(split[0].Equals("!")&&split[split.Length-1].Equals("?"))) {
 				Console.WriteLine("Wrong format received:" + input);
-				
+
 				return;
 			}
-			
+
+			// Handle BT Name Get Response BEFORE integer parsing (Command 67 contains string data)
+			if (split.Length >= 3 && split[1] == "67") {
+				string receivedName = split[2].Replace("?", "");
+				parent.Invoke((MethodInvoker)delegate {
+					parent.BTNameCurrentValue.Text = receivedName;
+					parent.BTNameTextBox.Text = receivedName;
+				});
+				Console.WriteLine("Received BT Name: " + receivedName);
+				return; // Don't parse as integers
+			}
+
 			int[] ints = new int[split.Length-2];
 			int y=0;
-			
-			for (int i=1; i<split.Length-1; i++) {				
-				 ints[y] = Int32.Parse(split[i]); 					
+
+			for (int i=1; i<split.Length-1; i++) {
+				 ints[y] = Int32.Parse(split[i]);
 					y++;
 			}
-			
-			
+
+
 			if (ints[0] == 55 || ints[0] == 555) InterpretLevel(ints);
 			
 			if (ints[0] == 10 && ints[1] == 1) MessageBox.Show("Settings saved on device!");
@@ -571,6 +602,8 @@ namespace dsp_gui
 			if (ints[0] == 66) {
 				parent.global_bypass[0]=ints[1];
 				parent.global_bypass[1]=ints[2];
+				Console.WriteLine("Bypass received: VBS=" + ints[1] + " DynBass=" + ints[2]);
+				parent.UpdateGlobalBypassButtons();
 			}
 			
 			if (ints[0] == 65) {
@@ -595,9 +628,18 @@ namespace dsp_gui
 				loaddatainprogress=false;
 				cmdfifo.clear();
 			}
-			
-			
-			
+
+			// BT Name Set Response - Command 42
+			if (ints[0] == 42 && ints[1] == 1) {
+				// Update current name display after successful set
+				parent.Invoke((MethodInvoker)delegate {
+					parent.BTNameCurrentValue.Text = parent.BTNameTextBox.Text;
+				});
+				MessageBox.Show("Bluetooth name updated! Please save settings and restart device.");
+			}
+
+
+
 		}
 		
 		void InterpretLevel(int[] input) {
@@ -659,8 +701,10 @@ namespace dsp_gui
 			
 			//dynbass
 			cmdfifo.push("?,39");
-			
-			
+
+			//bluetooth name
+			cmdfifo.push("?,67");
+
 			//irparams
 			cmdfifo.push("?,37");
 			

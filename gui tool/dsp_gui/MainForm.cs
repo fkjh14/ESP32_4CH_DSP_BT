@@ -195,7 +195,8 @@ namespace dsp_gui
 			}
 			global_bypass[0]=1;
 			global_bypass[1]=1;
-			
+			UpdateGlobalBypassButtons();
+
 			for (int i=0; i<8; i++) irparams[i]=0;
 			
 			Source0Select.SelectedIndex = 0;
@@ -2602,7 +2603,39 @@ namespace dsp_gui
 				connect.PublicBypassRequest(global_bypass[0],global_bypass[1]);
 			}
 		}
-		
+
+		public void UpdateGlobalBypassButtons() {
+			// Thread-safe update for Windows Forms
+			if (InvokeRequired) {
+				Invoke(new Action(UpdateGlobalBypassButtons));
+				return;
+			}
+
+			Console.WriteLine("UpdateGlobalBypassButtons called: VBS=" + global_bypass[0] + " DynBass=" + global_bypass[1]);
+
+			// Update VBS (Bass Enhance) Bypass Button
+			if (global_bypass[0]==0) {
+				VBS_Bypass.BackColor = Color.Lime;
+				VBS_Bypass.Text = "ON";
+				Console.WriteLine("VBS Button set to ON");
+			}
+			else {
+				VBS_Bypass.BackColor = Color.Red;
+				VBS_Bypass.Text = "OFF";
+				Console.WriteLine("VBS Button set to OFF");
+			}
+
+			// Update Dynamic Bass Bypass Button
+			if (global_bypass[1]==0) {
+				DynBass_Bypass.BackColor = Color.Lime;
+				DynBass_Bypass.Text = "ON";
+			}
+			else {
+				DynBass_Bypass.BackColor = Color.Red;
+				DynBass_Bypass.Text = "OFF";
+			}
+		}
+
 		void HPBypassButtonUpdateColor() {
 			if (channel_bypass[channelselect,1]==0) {
 				HPBypass.BackColor = Color.Lime;
@@ -3081,7 +3114,21 @@ namespace dsp_gui
 			}
 			HPLPEQUpdateLinks();
 			SendLPHPEQ();
-			UpdateDSPPlotter();				
+			UpdateDSPPlotter();
+		}
+
+		void BTNameSetButtonClick(object sender, EventArgs e)
+		{
+			string name = BTNameTextBox.Text.Trim();
+			if (string.IsNullOrEmpty(name)) {
+				MessageBox.Show("Please enter a Bluetooth device name!");
+				return;
+			}
+			if (name.Length > 31) {
+				MessageBox.Show("Bluetooth name is too long! Maximum 31 characters.");
+				return;
+			}
+			connect.SetBTNameRequest(name);
 		}
 	}
 }

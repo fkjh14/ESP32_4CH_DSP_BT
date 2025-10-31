@@ -175,6 +175,12 @@ namespace dsp_gui
 			this.DynBassThres_Bar = new XComponent.SliderBar.MACTrackBar();
 			this.DynBassWatchtime_Bar = new XComponent.SliderBar.MACTrackBar();
 			this.tabPage6 = new System.Windows.Forms.TabPage();
+			this.tabPage10 = new System.Windows.Forms.TabPage();
+			this.BTNameLabel = new System.Windows.Forms.Label();
+			this.BTNameCurrentLabel = new System.Windows.Forms.Label();
+			this.BTNameCurrentValue = new System.Windows.Forms.Label();
+			this.BTNameTextBox = new System.Windows.Forms.TextBox();
+			this.BTNameSetButton = new System.Windows.Forms.Button();
 			this.groupBox8 = new System.Windows.Forms.GroupBox();
 			this.IR_VOLDOWN_PASTE = new System.Windows.Forms.Button();
 			this.IR_VOLDOWN_CMD = new System.Windows.Forms.Label();
@@ -235,6 +241,7 @@ namespace dsp_gui
 			this.tabPage4.SuspendLayout();
 			this.tabPage8.SuspendLayout();
 			this.tabPage6.SuspendLayout();
+			this.tabPage10.SuspendLayout();
 			this.groupBox8.SuspendLayout();
 			this.groupBox7.SuspendLayout();
 			this.groupBox6.SuspendLayout();
@@ -328,6 +335,7 @@ namespace dsp_gui
 			this.tabControl1.Controls.Add(this.tabPage4);
 			this.tabControl1.Controls.Add(this.tabPage8);
 			this.tabControl1.Controls.Add(this.tabPage6);
+			this.tabControl1.Controls.Add(this.tabPage10);
 			this.tabControl1.Location = new System.Drawing.Point(12, 445);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
@@ -2542,7 +2550,67 @@ namespace dsp_gui
 			this.Out4Draw.Text = "Out 4";
 			this.Out4Draw.UseVisualStyleBackColor = true;
 			this.Out4Draw.CheckedChanged += new System.EventHandler(this.Out4DrawCheckedChanged);
-			// 
+			//
+			// tabPage10
+			//
+			this.tabPage10.BackColor = System.Drawing.Color.Black;
+			this.tabPage10.Controls.Add(this.BTNameSetButton);
+			this.tabPage10.Controls.Add(this.BTNameTextBox);
+			this.tabPage10.Controls.Add(this.BTNameCurrentValue);
+			this.tabPage10.Controls.Add(this.BTNameCurrentLabel);
+			this.tabPage10.Controls.Add(this.BTNameLabel);
+			this.tabPage10.Location = new System.Drawing.Point(4, 22);
+			this.tabPage10.Name = "tabPage10";
+			this.tabPage10.Size = new System.Drawing.Size(837, 213);
+			this.tabPage10.TabIndex = 10;
+			this.tabPage10.Text = "Settings";
+			//
+			// BTNameCurrentLabel
+			//
+			this.BTNameCurrentLabel.ForeColor = System.Drawing.Color.White;
+			this.BTNameCurrentLabel.Location = new System.Drawing.Point(20, 60);
+			this.BTNameCurrentLabel.Name = "BTNameCurrentLabel";
+			this.BTNameCurrentLabel.Size = new System.Drawing.Size(150, 23);
+			this.BTNameCurrentLabel.TabIndex = 3;
+			this.BTNameCurrentLabel.Text = "Current BT Name:";
+			//
+			// BTNameCurrentValue
+			//
+			this.BTNameCurrentValue.ForeColor = System.Drawing.Color.Lime;
+			this.BTNameCurrentValue.Location = new System.Drawing.Point(180, 60);
+			this.BTNameCurrentValue.Name = "BTNameCurrentValue";
+			this.BTNameCurrentValue.Size = new System.Drawing.Size(400, 23);
+			this.BTNameCurrentValue.TabIndex = 4;
+			this.BTNameCurrentValue.Text = "---";
+			//
+			// BTNameLabel
+			//
+			this.BTNameLabel.ForeColor = System.Drawing.Color.White;
+			this.BTNameLabel.Location = new System.Drawing.Point(20, 30);
+			this.BTNameLabel.Name = "BTNameLabel";
+			this.BTNameLabel.Size = new System.Drawing.Size(150, 23);
+			this.BTNameLabel.TabIndex = 0;
+			this.BTNameLabel.Text = "New BT Name:";
+			//
+			// BTNameTextBox
+			//
+			this.BTNameTextBox.Location = new System.Drawing.Point(180, 27);
+			this.BTNameTextBox.Name = "BTNameTextBox";
+			this.BTNameTextBox.Size = new System.Drawing.Size(300, 20);
+			this.BTNameTextBox.TabIndex = 1;
+			this.BTNameTextBox.MaxLength = 31;
+			//
+			// BTNameSetButton
+			//
+			this.BTNameSetButton.ForeColor = System.Drawing.Color.Black;
+			this.BTNameSetButton.Location = new System.Drawing.Point(500, 25);
+			this.BTNameSetButton.Name = "BTNameSetButton";
+			this.BTNameSetButton.Size = new System.Drawing.Size(100, 25);
+			this.BTNameSetButton.TabIndex = 2;
+			this.BTNameSetButton.Text = "Set BT Name";
+			this.BTNameSetButton.UseVisualStyleBackColor = true;
+			this.BTNameSetButton.Click += new System.EventHandler(this.BTNameSetButtonClick);
+			//
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2594,6 +2662,7 @@ namespace dsp_gui
 			this.tabPage4.ResumeLayout(false);
 			this.tabPage8.ResumeLayout(false);
 			this.tabPage6.ResumeLayout(false);
+			this.tabPage10.ResumeLayout(false);
 			this.groupBox8.ResumeLayout(false);
 			this.groupBox7.ResumeLayout(false);
 			this.groupBox6.ResumeLayout(false);
@@ -2779,6 +2848,12 @@ namespace dsp_gui
 		private System.Windows.Forms.TabPage tabPage6;
 		private System.Windows.Forms.TabPage tabPage5;
 		private System.Windows.Forms.TabPage tabPage1;
+		private System.Windows.Forms.TabPage tabPage10;
+		private System.Windows.Forms.Label BTNameLabel;
+		private System.Windows.Forms.Label BTNameCurrentLabel;
+		public System.Windows.Forms.Label BTNameCurrentValue;
+		public System.Windows.Forms.TextBox BTNameTextBox;
+		private System.Windows.Forms.Button BTNameSetButton;
 		private System.Windows.Forms.TabControl tabControl1;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Button button7;

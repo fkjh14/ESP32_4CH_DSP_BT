@@ -295,9 +295,8 @@ static void volume_set_by_controller(uint8_t volume)
     _lock_release(&s_volume_lock);
 }
 
-static void volume_set_by_local_host(uint8_t volume)
+void volume_set_by_local_host(uint8_t volume)
 {
-	return;
     ESP_LOGI(BT_RC_TG_TAG, "Volume is set locally to: %d%%", (uint32_t)volume * 100 / 0x7f);
     _lock_acquire(&s_volume_lock);
     s_volume = volume;

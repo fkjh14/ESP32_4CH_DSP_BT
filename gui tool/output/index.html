@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP32 4CH DSP BT AMPLIFIER</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="main-container">
+        <!-- Top Control Panel -->
+        <div class="top-panel">
+            <div class="control-buttons">
+                <button class="btn-control">Save Settings to Device</button>
+                <button class="btn-control">Load Settings from Device</button>
+                <button class="btn-control">Reset all</button>
+            </div>
+            
+            <!-- Peak Meter Section -->
+            <div class="peak-meter-section">
+                <div class="peak-meter">
+                    <div class="meter-bar" id="meter1"></div>
+                    <div class="meter-bar" id="meter2"></div>
+                    <div class="meter-bar" id="meter3"></div>
+                    <div class="meter-bar" id="meter4"></div>
+                </div>
+                <div class="meter-labels">1 &nbsp;&nbsp;&nbsp; 2 &nbsp;&nbsp;&nbsp; 3 &nbsp;&nbsp;&nbsp; 4</div>
+            </div>
+        </div>
+
+        <!-- Tab Control -->
+        <div class="tab-container">
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="showTab('tab1')">Source / Mute / Phase / Gain</button>
+                <button class="tab-btn" onclick="showTab('tab2')">HP / LP / EQ</button>
+                <button class="tab-btn" onclick="showTab('tab3')">Limiter</button>
+                <button class="tab-btn" onclick="showTab('tab4')">Delay</button>
+                <button class="tab-btn" onclick="showTab('tab5')">Virtual Bass System</button>
+                <button class="tab-btn" onclick="showTab('tab6')">Dynamic Bass Boost</button>
+                <button class="tab-btn" onclick="showTab('tab7')">IR Control</button>
+            </div>
+
+            <!-- Tab 1: Source / Mute / Phase / Gain -->
+            <div id="tab1" class="tab-content active">
+                <div class="tab-layout">
+                    <!-- Source Selection -->
+                    <div class="source-section">
+                        <div class="source-row">
+                            <label>Out 1</label>
+                            <select class="source-select">
+                                <option>Input 1</option>
+                                <option>Input 2</option>
+                            </select>
+                        </div>
+                        <div class="source-row">
+                            <label>Out 2</label>
+                            <select class="source-select">
+                                <option>Input 1</option>
+                                <option>Input 2</option>
+                            </select>
+                        </div>
+                        <div class="source-row">
+                            <label>Out 3</label>
+                            <select class="source-select">
+                                <option>Input 1</option>
+                                <option>Input 2</option>
+                            </select>
+                        </div>
+                        <div class="source-row">
+                            <label>Out 4</label>
+                            <select class="source-select">
+                                <option>Input 1</option>
+                                <option>Input 2</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Mute Section -->
+                    <div class="control-group">
+                        <h3>Mute</h3>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox"> OUT 1</label>
+                            <label><input type="checkbox"> OUT 2</label>
+                            <label><input type="checkbox"> OUT 3</label>
+                            <label><input type="checkbox"> OUT 4</label>
+                        </div>
+                    </div>
+
+                    <!-- Phase Section -->
+                    <div class="control-group">
+                        <h3>180°</h3>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox"> OUT 1</label>
+                            <label><input type="checkbox"> OUT 2</label>
+                            <label><input type="checkbox"> OUT 3</label>
+                            <label><input type="checkbox"> OUT 4</label>
+                        </div>
+                    </div>
+
+                    <!-- Gain Section -->
+                    <div class="control-group gain-section">
+                        <h3>Gain</h3>
+                        <div class="gain-controls">
+                            <div class="gain-row">
+                                <input type="range" class="gain-slider" min="-70" max="20" value="0">
+                                <span class="gain-value">0 dB</span>
+                            </div>
+                            <div class="gain-row">
+                                <input type="range" class="gain-slider" min="-70" max="20" value="0">
+                                <span class="gain-value">0 dB</span>
+                            </div>
+                            <div class="gain-row">
+                                <input type="range" class="gain-slider" min="-70" max="20" value="0">
+                                <span class="gain-value">0 dB</span>
+                            </div>
+                            <div class="gain-row">
+                                <input type="range" class="gain-slider" min="-70" max="20" value="0">
+                                <span class="gain-value">0 dB</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: HP / LP / EQ -->
+            <div id="tab2" class="tab-content">
+                <div class="eq-section">
+                    <!-- High Pass -->
+                    <div class="filter-section">
+                        <h4>High Pass</h4>
+                        <div class="filter-controls">
+                            <label>Freq: <input type="text" value="20" class="freq-input"></label>
+                            <label>Q: <input type="text" value="0.7" class="q-input"></label>
+                            <label>Order: <select><option>1</option><option>2</option><option>4</option></select></label>
+                            <button class="bypass-btn">OFF</button>
+                        </div>
+                    </div>
+
+                    <!-- EQ Bands -->
+                    <div class="eq-bands">
+                        <div class="eq-band">
+                            <h4>EQ 0</h4>
+                            <div class="eq-controls">
+                                <label>Type: <select><option>Peak</option><option>Low Shelf</option><option>High Shelf</option></select></label>
+                                <label>Freq: <input type="text" value="100" class="freq-input"></label>
+                                <label>Q: <input type="text" value="1.0" class="q-input"></label>
+                                <label>Gain: <input type="text" value="0" class="gain-input"></label>
+                                <button class="bypass-btn">OFF</button>
+                            </div>
+                        </div>
+                        <div class="eq-band">
+                            <h4>EQ 1</h4>
+                            <div class="eq-controls">
+                                <label>Type: <select><option>Peak</option><option>Low Shelf</option><option>High Shelf</option></select></label>
+                                <label>Freq: <input type="text" value="500" class="freq-input"></label>
+                                <label>Q: <input type="text" value="1.0" class="q-input"></label>
+                                <label>Gain: <input type="text" value="0" class="gain-input"></label>
+                                <button class="bypass-btn">OFF</button>
+                            </div>
+                        </div>
+                        <div class="eq-band">
+                            <h4>EQ 2</h4>
+                            <div class="eq-controls">
+                                <label>Type: <select><option>Peak</option><option>Low Shelf</option><option>High Shelf</option></select></label>
+                                <label>Freq: <input type="text" value="1000" class="freq-input"></label>
+                                <label>Q: <input type="text" value="1.0" class="q-input"></label>
+                                <label>Gain: <input type="text" value="0" class="gain-input"></label>
+                                <button class="bypass-btn">OFF</button>
+                            </div>
+                        </div>
+                        <div class="eq-band">
+                            <h4>EQ 3</h4>
+                            <div class="eq-controls">
+                                <label>Type: <select><option>Peak</option><option>Low Shelf</option><option>High Shelf</option></select></label>
+                                <label>Freq: <input type="text" value="5000" class="freq-input"></label>
+                                <label>Q: <input type="text" value="1.0" class="q-input"></label>
+                                <label>Gain: <input type="text" value="0" class="gain-input"></label>
+                                <button class="bypass-btn">OFF</button>
+                            </div>
+                        </div>
+                        <div class="eq-band">
+                            <h4>EQ 4</h4>
+                            <div class="eq-controls">
+                                <label>Type: <select><option>Peak</option><option>Low Shelf</option><option>High Shelf</option></select></label>
+                                <label>Freq: <input type="text" value="10000" class="freq-input"></label>
+                                <label>Q: <input type="text" value="1.0" class="q-input"></label>
+                                <label>Gain: <input type="text" value="0" class="gain-input"></label>
+                                <button class="bypass-btn">OFF</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Low Pass -->
+                    <div class="filter-section">
+                        <h4>Low Pass</h4>
+                        <div class="filter-controls">
+                            <label>Freq: <input type="text" value="20000" class="freq-input"></label>
+                            <label>Q: <input type="text" value="0.7" class="q-input"></label>
+                            <label>Order: <select><option>1</option><option>2</option><option>4</option></select></label>
+                            <button class="bypass-btn">OFF</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Limiter -->
+            <div id="tab3" class="tab-content">
+                <div class="limiter-section">
+                    <div class="limiter-controls">
+                        <div class="limiter-row">
+                            <label>Threshold</label>
+                            <input type="range" class="limiter-slider" min="-70" max="0" value="0">
+                            <span class="limiter-value">0 dB</span>
+                        </div>
+                        <div class="limiter-row">
+                            <label>Release</label>
+                            <input type="range" class="limiter-slider" min="1" max="1000" value="100">
+                            <span class="limiter-value">100 ms</span>
+                        </div>
+                    </div>
+                    <div class="amp-output">
+                        <div>Amp Output: 26,94V (PEAK) | 19,05V (RMS) | 90,69W @ 4 Ohms | 45,35W @ 8 Ohms</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 4: Delay -->
+            <div id="tab4" class="tab-content">
+                <div class="delay-section">
+                    <div class="delay-controls">
+                        <div class="delay-row">
+                            <label>OUT 1</label>
+                            <input type="range" class="delay-slider" min="0" max="100" value="0">
+                            <span class="delay-value">0 ms</span>
+                        </div>
+                        <div class="delay-row">
+                            <label>OUT 2</label>
+                            <input type="range" class="delay-slider" min="0" max="100" value="0">
+                            <span class="delay-value">0 ms</span>
+                        </div>
+                        <div class="delay-row">
+                            <label>OUT 3</label>
+                            <input type="range" class="delay-slider" min="0" max="100" value="0">
+                            <span class="delay-value">0 ms</span>
+                        </div>
+                        <div class="delay-row">
+                            <label>OUT 4</label>
+                            <input type="range" class="delay-slider" min="0" max="100" value="0">
+                            <span class="delay-value">0 ms</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 5: Virtual Bass System -->
+            <div id="tab5" class="tab-content">
+                <div class="vbs-section">
+                    <button class="bypass-btn large">VBS OFF</button>
+                    <div class="vbs-controls">
+                        <div class="vbs-row">
+                            <label>Frequency</label>
+                            <input type="range" class="vbs-slider" min="20" max="200" value="80">
+                            <span class="vbs-value">80 Hz</span>
+                        </div>
+                        <div class="vbs-row">
+                            <label>Gain</label>
+                            <input type="range" class="vbs-slider" min="0" max="20" value="0">
+                            <span class="vbs-value">0 dB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 6: Dynamic Bass Boost -->
+            <div id="tab6" class="tab-content">
+                <div class="dynbass-section">
+                    <button class="bypass-btn large">Dynamic Bass OFF</button>
+                    <div class="dynbass-controls">
+                        <div class="dynbass-row">
+                            <label>Max Gain</label>
+                            <input type="range" class="dynbass-slider" min="0" max="20" value="10">
+                            <span class="dynbass-value">10 dB</span>
+                        </div>
+                        <div class="dynbass-row">
+                            <label>Gain Speed</label>
+                            <input type="range" class="dynbass-slider" min="1" max="100" value="50">
+                            <span class="dynbass-value">50</span>
+                        </div>
+                        <div class="dynbass-row">
+                            <label>Frequency</label>
+                            <input type="range" class="dynbass-slider" min="20" max="200" value="60">
+                            <span class="dynbass-value">60 Hz</span>
+                        </div>
+                        <div class="dynbass-row">
+                            <label>Threshold</label>
+                            <input type="range" class="dynbass-slider" min="-70" max="0" value="-30">
+                            <span class="dynbass-value">-30 dB</span>
+                        </div>
+                        <div class="dynbass-row">
+                            <label>Watch Time</label>
+                            <input type="range" class="dynbass-slider" min="1" max="1000" value="100">
+                            <span class="dynbass-value">100 ms</span>
+                        </div>
+                    </div>
+                    <div class="dynbass-status">
+                        <div>Latest Gain: <span id="latest-gain">0 dB</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 7: IR Control -->
+            <div id="tab7" class="tab-content">
+                <div class="ir-section">
+                    <div class="ir-activity">
+                        <div class="ir-led"></div>
+                        <span>IR Activity</span>
+                    </div>
+                    
+                    <div class="ir-groups">
+                        <div class="ir-group">
+                            <h4>Received IR</h4>
+                            <div class="ir-display">
+                                <div>ADDR: <span id="ir-rx-addr">0x00</span></div>
+                                <div>CMD: <span id="ir-rx-cmd">0x00</span></div>
+                            </div>
+                        </div>
+
+                        <div class="ir-group">
+                            <h4>ON/OFF</h4>
+                            <div class="ir-display">
+                                <div>ADDR: <span>0x00</span></div>
+                                <div>CMD: <span>0x00</span></div>
+                                <button class="paste-btn">PASTE</button>
+                            </div>
+                        </div>
+
+                        <div class="ir-group">
+                            <h4>MUTE</h4>
+                            <div class="ir-display">
+                                <div>ADDR: <span>0x00</span></div>
+                                <div>CMD: <span>0x00</span></div>
+                                <button class="paste-btn">PASTE</button>
+                            </div>
+                        </div>
+
+                        <div class="ir-group">
+                            <h4>VOL UP</h4>
+                            <div class="ir-display">
+                                <div>ADDR: <span>0x00</span></div>
+                                <div>CMD: <span>0x00</span></div>
+                                <button class="paste-btn">PASTE</button>
+                            </div>
+                        </div>
+
+                        <div class="ir-group">
+                            <h4>VOL DOWN</h4>
+                            <div class="ir-display">
+                                <div>ADDR: <span>0x00</span></div>
+                                <div>CMD: <span>0x00</span></div>
+                                <button class="paste-btn">PASTE</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabId) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Remove active from all buttons
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(tabId).classList.add('active');
+            
+            // Activate clicked button
+            event.target.classList.add('active');
+        }
+
+        // Add slider value updates
+        document.addEventListener('DOMContentLoaded', function() {
+            const sliders = document.querySelectorAll('input[type="range"]');
+            sliders.forEach(slider => {
+                slider.addEventListener('input', function() {
+                    const valueSpan = this.parentElement.querySelector('.gain-value, .limiter-value, .delay-value, .vbs-value, .dynbass-value');
+                    if (valueSpan) {
+                        if (this.classList.contains('gain-slider')) {
+                            valueSpan.textContent = this.value + ' dB';
+                        } else if (this.classList.contains('delay-slider')) {
+                            valueSpan.textContent = this.value + ' ms';
+                        } else if (this.classList.contains('vbs-slider')) {
+                            if (this.previousElementSibling.textContent.includes('Frequency')) {
+                                valueSpan.textContent = this.value + ' Hz';
+                            } else {
+                                valueSpan.textContent = this.value + ' dB';
+                            }
+                        } else if (this.classList.contains('dynbass-slider')) {
+                            const label = this.previousElementSibling.textContent;
+                            if (label.includes('Frequency')) {
+                                valueSpan.textContent = this.value + ' Hz';
+                            } else if (label.includes('Gain') || label.includes('Threshold')) {
+                                valueSpan.textContent = this.value + ' dB';
+                            } else if (label.includes('Time')) {
+                                valueSpan.textContent = this.value + ' ms';
+                            } else {
+                                valueSpan.textContent = this.value;
+                            }
+                        } else {
+                            valueSpan.textContent = this.value + ' dB';
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
